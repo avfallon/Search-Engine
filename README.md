@@ -10,3 +10,8 @@ The directory Nim.docs includes a JavaDoc example for the game OneRowNim.
 The directory testing includes a simple test case.  note that the script 
 `test0` assumes that your code is in the directors src.
 
+
+# OOA
+InitialUML.pdf
+InitialUseCaseDiagram.pdf
+InitialUseCases.pdf
