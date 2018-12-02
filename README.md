@@ -13,8 +13,15 @@ The directory testing includes a simple test case.  note that the script
 
 # OOA
 InitialUML.pdf
+ -- "word" seems a poor name for the concept ... might you rename it?
+ -- while it is a set 'they' call it a stoplist and we had better not reinvent their terminology :)
+ -- "+ inStopList(String inpStr): boolean"  whose responsibility should this be?
+ -- your class inverted index does too much ... this suggests looking for more classes.
+
 InitialUseCaseDiagram.pdf
+
 InitialUseCases.pdf
+<<<<<<< HEAD
 
 # OOD
 Class: Document
@@ -69,3 +76,6 @@ Void buildIndex(String[] args)
   call buildDocumentSet, and create an InvertedIndex 
   with those and the documentsP flag
 
+=======
+ -- good!
+>>>>>>> 750f06e38de716493370d1e47a45f08130942fa1
