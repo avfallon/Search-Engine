@@ -21,61 +21,98 @@ InitialUML.pdf
 InitialUseCaseDiagram.pdf
 
 InitialUseCases.pdf
-<<<<<<< HEAD
+ -- Good!
 
 # OOD
-Class: Document
+Nested Class: Document (inside InvertedIndex)
 Attributes:
+String docName
 String fullDocString
-  String of the entire document, for -d output
+    String of the entire document, for -d output
 Set<String> wordSet
-  holds all delimited separate words in the document
-HashSet<Set<HashMaps>> hashSet
-  Set of buckets(sets of hashmaps) 
+    holds all delimited separate words in the document
 
 Methods:
 Document(String documentName)
-  Reads in the document and stores the String in fullDocString, 
-  then calls delimitString on each token in the string and add them to wordSet
-private HashMap hash(String oneWord)
-  hashes a single word that has already been delimited and is not in stop list
+    Instantiates docName, reads in the document and stores the String in fullDocString
+    then calls buildWordSet
+void buildWordSet()
+    splits the fullDocString into tokens, delimits each token, and adds it to wordSet
 private String delimitString(String oneWord)
-  Returns a String of the word without the punctuation
-void compareToStopList(Document stopList)
-  searches stopList for each item in wordset, if there is a match,
-  remove that item from wordset
-void buildSet()
-  hashes each item in wordSet and adds the HashMap to the hashSet
-boolean search(String wordToFind)
-  searches the hashSet for a certain word
+    Returns a String of the word without the punctuation
 
 
-Class InvertedIndex
+Class: InvertedIndex
 Attributes:
 Boolean displayDocText
-  true if a search should return the full text of a document, 
-  rather than returning just the name of the document
-Document stopList
-Set<Document> docSet
+    true if a search should return the full text of a document,
+    rather than returning just the name of the document
+HashSet<String> stopList
+HashMap<String, Document> docMap
+HashMap<String, Set<Document>> wordIndex
 
 Methods:
-InvertedIndex(Boolean displayDoc, Document stopList, Set<Document> docSet)
-  Instantiates displayDocText, stopList, and docSet
-Void buildIndex()
-  for each item in docset, compare it to the stopList and then call buildSet() on it
+InvertedIndex(Boolean displayDoc, String stopListName, String[] docNames)
+    Instantiate displayDocText, build stopList, 
+    build DocMap, and build the index
+private HashSet<String> buildStopList(String stopListName)
+    reads in the stopList file, adds each token to the hashSet
+private void buildDocMap(String[] docNames)
+    Make a Document object using each docName, and add the name and Document
+    to the docMap 
+private void buildIndex()
+    Create a HashMap index, and then for each value in docMap and for each item
+    in their wordSet (a nested for loop), check if that item is in the stopList. 
+    If not, check index to see if it contains a key that matches the 
+    current String. If not, put the String in as a key with a null value. 
+    Then get the value associated with the String, create a new set with those values 
+    plus the docname of the current document and replace the entry for the key 
+private Boolean inStopList(String oneWord)
+    Returns if stopList contains the String 
+Set<String> search(String searchWord)
+    If wordIndex contains the searchWord, return its value
+Void printDocs(Set<String> docNames)
+    if displayDocText is true, find the Document objects associated with each docName 
+    and print the full text String. Otherwise, print each item in docNames to standard out
 
-CLI
+Class: Driver
+    Create a CLI class, use it to create an InvertedIndex, create a query
+    and while local variable endProgram is false, make a new query, 
+    run it, and set endProgram equal to endProgram()
+
+Class: Query
+Attributes: 
+Set<String> docSet
+    Set of the documents to be printed
+Boolean endProgram
+    Tells if the user entered the command to end the program
+Methods:
+Query()
+    Set endProgram to false and instantiate an empty docSet
+Void runQuery(InvertedIndex index)
+    Create a Scanner, and while System.in has a next value 
+    that isn’t ctrl-d, run a search on index using the next 
+    System.in value and store the resulting set in a tempDocSet.
+    Merge the sets.
+    After there are no more System.in values, call printDocs with docSet
+    Check if the user entered ctrl-d, if so change endProgram
+private void mergeSets(Set<String> tempDocSet)
+//would this be better as a LinkedList for one/both of the sets?
+    If docSet is empty, set it equal to tempDocSet. Otherwise, for each item 
+    in docSet, if it is not contained in tempDocSet, remove it from docSet
+boolean endProgram()
+    Return endProgram
+
+Class: CLI
 Attributes:
 None
 Methods:
 Private Set buildDocumentSet(String[] docNames)
-  Instantiates documents with each item of docNames 
-  and adds them to a returned set 
-Void buildIndex(String[] args)
-  Process the command line arguments, create a stopList document, 
-  call buildDocumentSet, and create an InvertedIndex 
-  with those and the documentsP flag
+    Instantiates documents with each item of docNames
+    and adds them to a returned set
+InvertedIndex buildIndex(String[] args)
+    Process the command line arguments, call buildDocumentSet, 
+    and create an InvertedIndex with the array of doc names, stopList file name
+    and the documentsP flag, and returns the InvertedIndex
 
-=======
- -- good!
->>>>>>> 750f06e38de716493370d1e47a45f08130942fa1
+
