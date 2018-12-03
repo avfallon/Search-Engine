@@ -34,8 +34,10 @@ Set<String> wordSet
 
 Methods:
 Document(String documentName)
+Attributes:
     Instantiates docName, reads in the document and stores the String in fullDocString
     then calls buildWordSet
+Methods:
 void buildWordSet()
     splits the fullDocString into tokens, delimits each token, and adds it to wordSet
 private String delimitString(String oneWord)
@@ -50,6 +52,8 @@ Boolean displayDocText
 HashSet<String> stopList
 HashMap<String, Document> docMap
 HashMap<String, Set<Document>> wordIndex
+-- each attribute needs a brief description
+-- what need does 'docMap' satisfy?
 
 Methods:
 InvertedIndex(Boolean displayDoc, String stopListName, String[] docNames)
@@ -86,6 +90,7 @@ Set<String> docSet
     Set of the documents to be printed
 Boolean endProgram
     Tells if the user entered the command to end the program
+-- this smells out of place ... its not part of a query in my world ....
 Methods:
 Query()
     Set endProgram to false and instantiate an empty docSet
@@ -94,13 +99,16 @@ Void runQuery(InvertedIndex index)
     that isn’t ctrl-d, run a search on index using the next 
     System.in value and store the resulting set in a tempDocSet.
     Merge the sets.
+-- how does the end of the line factor into this?
     After there are no more System.in values, call printDocs with docSet
     Check if the user entered ctrl-d, if so change endProgram
 private void mergeSets(Set<String> tempDocSet)
 //would this be better as a LinkedList for one/both of the sets?
     If docSet is empty, set it equal to tempDocSet. Otherwise, for each item 
+-- so the union?
     in docSet, if it is not contained in tempDocSet, remove it from docSet
 boolean endProgram()
+-- sounds like intersection now?
     Return endProgram
 
 Class: CLI
@@ -116,3 +124,4 @@ InvertedIndex buildIndex(String[] args)
     and the documentsP flag, and returns the InvertedIndex
 
 
+-- i'm happy for driver and CLI to be all in one class.
