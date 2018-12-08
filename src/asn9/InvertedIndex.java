@@ -26,20 +26,19 @@ public class InvertedIndex
             if(displayFullDoc)
                 createDocString();
             buildWordSet();
-            System.out.println(wordSet);
         }
         
-        public void createDocString() throws IOException
+        private void createDocString() throws IOException
         {
             File file = new File(docName);
             BufferedReader br = new BufferedReader(new FileReader(file));
             String line;
             while ((line = br.readLine()) != null)
-                fullDocString += line + "\n";
+                fullDocString += "\n" + line;
             br.close();
         }
         
-        public void buildWordSet() throws FileNotFoundException
+        private void buildWordSet() throws FileNotFoundException
         {
             File file = new File(docName);
             Scanner scan = new Scanner(file).useDelimiter("[^a-zA-Z]+");
@@ -50,12 +49,34 @@ public class InvertedIndex
             }
             scan.close();
         }
+        
+        @Override
+        public String toString()
+        {
+            return docName + fullDocString;
+        }
     }
     
-    
+    HashSet<String> stopList;
     
     public InvertedIndex(boolean displayFullDoc, String stopListName, String[] docNames) throws IOException
     {
         Document testDoc = new Document(docNames[0], displayFullDoc);
+        buildStopList(stopListName);
+        System.out.println(testDoc.toString());
+        System.out.println(stopList);
+    }
+    
+    private void buildStopList(String stopListName) throws FileNotFoundException
+    {
+        stopList = new HashSet<String>();
+        File file = new File(stopListName);
+        Scanner scan = new Scanner(file).useDelimiter("[^a-zA-Z]+");
+        while(scan.hasNext())
+        {
+            String currentWord = scan.next();
+            stopList.add(currentWord);
+        }
+        scan.close();
     }
 }
