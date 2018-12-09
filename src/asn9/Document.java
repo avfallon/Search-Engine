@@ -17,13 +17,11 @@ public class Document implements Iterable<String>
     /**
      * set of separate words in the document
      */
-    boolean displayText;
     
-    public Document(String documentName, boolean displayText) throws FileNotFoundException, IOException
+    public Document(String documentName) throws FileNotFoundException, IOException
     {
         docName = documentName;
         createDocString();
-        this.displayText = displayText;
     }
     
     private void createDocString() throws IOException, FileNotFoundException
@@ -52,9 +50,11 @@ public class Document implements Iterable<String>
     @Override
     public String toString()
     {
-        if(displayText)
-            return docName + fullDocString;
-        else
-            return docName;
+        return docName;
+    }
+    
+    public void printFullDoc()
+    {
+        System.out.println(fullDocString);
     }
 }

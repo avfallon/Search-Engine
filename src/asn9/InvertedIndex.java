@@ -76,6 +76,19 @@ public class InvertedIndex
         }
     }
     
+    public Set<Document> query(String line) throws IOException
+    {
+        Set<Document> docSet = new HashSet<Document>();
+        
+        StringTokenizer tokenizer = new StringTokenizer(line);
+        while(tokenizer.hasMoreTokens())
+        {
+            Document newDoc = new Document(tokenizer.nextToken());
+            docSet.add(newDoc);
+        }
+        return docSet;
+    }
+    
     public Set<Document> search(String word)
     {
         return wordIndex.get(word);
