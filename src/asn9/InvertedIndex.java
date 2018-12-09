@@ -4,79 +4,80 @@ import java.util.*;
 
 public class InvertedIndex
 {
-    class Document
-    {
-        /**
-         * file name of this document
-         */
-        String docName;
-        /**
-         * Entire String of the text of the document,
-         * for -d output
-         */
-        String fullDocString = "";
-        /**
-         * set of separate words in the document
-         */
-        Set<String> wordSet = new HashSet<String>();
-        
-        public Document(String documentName, boolean displayFullDoc) throws FileNotFoundException, IOException
-        {
-            docName = documentName;
-            if(displayFullDoc)
-                createDocString();
-            buildWordSet();
-        }
-        
-        private void createDocString() throws IOException
-        {
-            File file = new File(docName);
-            BufferedReader br = new BufferedReader(new FileReader(file));
-            String line;
-            while ((line = br.readLine()) != null)
-                fullDocString += "\n" + line;
-            br.close();
-        }
-        
-        private void buildWordSet() throws FileNotFoundException
-        {
-            File file = new File(docName);
-            Scanner scan = new Scanner(file).useDelimiter("[^a-zA-Z]+");
-            while(scan.hasNext())
-            {
-                String currentWord = scan.next();
-                wordSet.add(currentWord);
-            }
-            scan.close();
-        }
-        
-        @Override
-        public String toString()
-        {
-            return docName + fullDocString;
-        }
-    }
-    
-    HashSet<String> stopList;
+    Set<String> stopList;
+    Map<String, Set<Document>> wordIndex;
     
     public InvertedIndex(boolean displayFullDoc, String stopListName, String[] docNames) throws IOException
     {
-        Document testDoc = new Document(docNames[0], displayFullDoc);
         buildStopList(stopListName);
-        System.out.println(testDoc.toString());
-        System.out.println(stopList);
+        Set<Document> docSet = createDocuments(docNames, displayFullDoc);
+        buildIndex(docSet);
     }
     
     private void buildStopList(String stopListName) throws FileNotFoundException
     {
         stopList = new HashSet<String>();
-        File file = new File(stopListName);
-        Scanner scan = new Scanner(file).useDelimiter("[^a-zA-Z]+");
-        while(scan.hasNext())
+        try
         {
-            String currentWord = scan.next();
-            stopList.add(currentWord);
+            File file = new File(stopListName);
+            Scanner scan = new Scanner(file).useDelimiter("[^a-zA-Z]+");
+            while(scan.hasNext())
+            {
+                String currentWord = scan.next();
+                stopList.add(currentWord);
+            }
+            scan.close();
         }
-        scan.close();
+        catch(FileNotFoundException fnf)
+        {
+            System.out.println("Stop list file name does not match an existing file");
+        }
+    }
+    
+    private Set<Document> createDocuments(String[] docNames, boolean displayFullDoc) throws IOException
+    {
+        Set<Document> docSet = new HashSet<Document>();
+        for(int i=0; i<docNames.length;i++)
+        {
+            Document newDoc = new Document(docNames[i], displayFullDoc);
+            docSet.add(newDoc);
+        }
+        return docSet;
+    }
+    
+    private boolean inStopList(String oneWord)
+    {
+        return stopList.contains(oneWord);
+    }
+    
+    private void buildIndex(Set<Document> docSet)
+    {
+        wordIndex = new HashMap<String, Set<Document>>();
+        for(Document currentDoc: docSet)
+        {
+            for(String word: currentDoc)
+            {
+                if(!inStopList(word))
+                {
+                    if(!wordIndex.containsKey(word))
+                    {
+                        Set<Document> tempSet = new HashSet<Document>();
+                        tempSet.add(currentDoc);
+                        wordIndex.put(word, tempSet);
+                    }
+                    
+                    //wordIndex.get(word).add(currentDoc);
+                    Set<Document> valueSet = new HashSet<Document>();
+                    valueSet = wordIndex.get(word);
+                    valueSet.add(currentDoc);
+                    wordIndex.replace(word, valueSet);
+                }
+            }
+        }
+    }
+    
+    public Set<Document> search(String word)
+    {
+        return wordIndex.get(word);
     }
 }
