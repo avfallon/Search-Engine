@@ -1,16 +1,16 @@
-package asn9;
+
 import java.io.*;
 import java.util.*;
 
 public class InvertedIndex
 {
-    Set<String> stopList;
-    Map<String, Set<Document>> wordIndex;
+    protected Set<String> stopList;
+    protected Map<String, Set<Document>> wordIndex;
     
-    public InvertedIndex(boolean displayFullDoc, String stopListName, String[] docNames) throws IOException
+    public InvertedIndex(List<String> argList) throws IOException
     {
-        buildStopList(stopListName);
-        Set<Document> docSet = createDocuments(docNames, displayFullDoc);
+        buildStopList(argList.get(0));
+        Set<Document> docSet = createDocuments(argList.subList(1, argList.size()));
         buildIndex(docSet);
     }
     
@@ -34,13 +34,12 @@ public class InvertedIndex
         }
     }
     
-    private Set<Document> createDocuments(String[] docNames, boolean displayFullDoc) throws IOException
+    private Set<Document> createDocuments(List<String> docNames) throws IOException
     {
         Set<Document> docSet = new HashSet<Document>();
-        for(int i=0; i<docNames.length;i++)
+        for(int i=0; i<docNames.size();i++)
         {
-            Document newDoc = new Document(docNames[i], displayFullDoc);
-            docSet.add(newDoc);
+            docSet.add(new Document(docNames.get(i)));
         }
         return docSet;
     }
@@ -65,8 +64,6 @@ public class InvertedIndex
                         tempSet.add(currentDoc);
                         wordIndex.put(word, tempSet);
                     }
-                    
-                    //wordIndex.get(word).add(currentDoc);
                     Set<Document> valueSet = new HashSet<Document>();
                     valueSet = wordIndex.get(word);
                     valueSet.add(currentDoc);
@@ -78,19 +75,36 @@ public class InvertedIndex
     
     public Set<Document> query(String line) throws IOException
     {
-        Set<Document> docSet = new HashSet<Document>();
+        Set<String> wordSet = new HashSet<String>();
+        Set<Document> finalDocSet = new HashSet<Document>();
         
         StringTokenizer tokenizer = new StringTokenizer(line);
         while(tokenizer.hasMoreTokens())
         {
-            Document newDoc = new Document(tokenizer.nextToken());
-            docSet.add(newDoc);
+            String word = tokenizer.nextToken();
+            wordSet.add(word);
         }
-        return docSet;
+        for(String word: wordSet)
+        {
+            Set<Document> newDocs = wordIndex.get(word);
+            if(newDocs != null)
+            {
+                if(finalDocSet == null)
+                    finalDocSet = newDocs;
+                
+                Set<Document> tempSet = finalDocSet;
+                for(Document doc: tempSet)
+                {
+                    if(!newDocs.contains(doc))
+                        finalDocSet.remove(doc);
+                }
+            }
+        }
+        return finalDocSet;
     }
     
-    public Set<Document> search(String word)
+    public void printIndex()
     {
-        return wordIndex.get(word);
+        System.out.println(wordIndex.entrySet());
     }
 }

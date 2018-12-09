@@ -1,4 +1,4 @@
-package asn9;
+
 
 import java.io.*;
 import java.util.*;
@@ -8,12 +8,12 @@ public class Document implements Iterable<String>
     /**
      * file name of this document
      */
-    String docName;
+    protected String docName;
     /**
      * Entire String of the text of the document,
      * for -d output
      */
-    String fullDocString;
+    protected String fullDocString;
     /**
      * set of separate words in the document
      */
