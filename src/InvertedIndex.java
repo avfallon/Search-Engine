@@ -84,20 +84,27 @@ public class InvertedIndex
             String word = tokenizer.nextToken();
             wordSet.add(word);
         }
+        boolean setInstantiated = false;
         for(String word: wordSet)
         {
-            Set<Document> newDocs = wordIndex.get(word);
-            if(newDocs != null)
+            Set<Document> newDocs;
+            newDocs = (wordIndex.get(word) == null) ? new HashSet<Document>() : wordIndex.get(word);
+            if(!inStopList(word))
             {
-                if(finalDocSet == null)
-                    finalDocSet = newDocs;
-                
-                Set<Document> tempSet = finalDocSet;
-                for(Document doc: tempSet)
+                if(!setInstantiated)
                 {
-                    if(!newDocs.contains(doc))
-                        finalDocSet.remove(doc);
+                    finalDocSet = newDocs;
+                    setInstantiated = true;
                 }
+                
+                Set<Document> removeSet = new HashSet<Document>();
+                for(Document doc: finalDocSet)
+                    if(!newDocs.contains(doc))
+                        removeSet.add(doc);
+                System.out.println("---" + wordIndex.get(word));
+
+                for(Document doc:removeSet)
+                    finalDocSet.remove(doc);
             }
         }
         return finalDocSet;

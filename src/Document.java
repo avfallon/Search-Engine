@@ -2,6 +2,8 @@
 
 import java.io.*;
 import java.util.*;
+import java.nio.file.Paths;
+import java.nio.file.Path;
 
 public class Document implements Iterable<String>
 {
@@ -18,27 +20,25 @@ public class Document implements Iterable<String>
      * set of separate words in the document
      */
     
-    public Document(String documentName) throws FileNotFoundException, IOException
+    public Document(String fileName) throws FileNotFoundException, IOException, NullPointerException
     {
-        docName = documentName;
-        createDocString();
+        createDocString(fileName);
+        Path p = Paths.get(fileName);
+        docName = p.getFileName().toString();
     }
     
-    private void createDocString() throws IOException, FileNotFoundException
+    private void createDocString(String fileName) throws IOException, FileNotFoundException, NullPointerException
     {
         try
         {
-            BufferedReader br = new BufferedReader(new FileReader(docName));
-            fullDocString = "\n" + new Scanner(br).useDelimiter("\\A").next();
+            BufferedReader br = new BufferedReader(new FileReader(fileName));
+            fullDocString = new Scanner(br).useDelimiter("\\A").next();
             br.close();
         }
-        catch(FileNotFoundException fnf)
+        catch(Exception ex)
         {
-            System.out.println("File name does not match an existing file");
-        }
-        catch(IOException io)
-        {
-            System.out.println("IO Exception reached");
+            System.out.println("Received a " + ex);
+            ex.printStackTrace();
         }
     }
     

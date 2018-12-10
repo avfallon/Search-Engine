@@ -10,22 +10,26 @@ public class CLI
     public static void main(String[] args) throws IOException
     {
         String usage = "Usage: java CLI [-d] stopList Documents";
-        System.out.println(usage);
-        if(args.length < 2 || (args.length < 3 && args[0].equals("-d")))
-        {
-            System.out.println("Improper input: " + usage);
-            System.exit(-1);
-        }
+//        if(args.length < 2 || (args.length < 3 && args[0].equals("-d")))
+//        {
+//            System.out.println("Improper input: " + usage);
+//            System.exit(-1);
+//        }
         boolean displayText = false;
-        int start = 0;
-        if("-d".equals(args[0]))
-        {
-            displayText = true;
-            start = 1;
-        }
+//        int start = 0;
+//        if("-d".equals(args[0]))
+//        {
+//            displayText = true;
+//            start = 1;
+//        }
         long startTime = System.currentTimeMillis();
-        
-        List<String> argList = Arrays.asList(args);
+        List<String> argList = new ArrayList<String>();
+        argList.add("testing/stoplist");
+                argList.add("testing/doc1");
+                        argList.add("testing/doc2");
+                                argList.add("testing/doc3");
+//        List<String> argList = Arrays.asList(args);
+//        argList = argList.subList(start, argList.size());
         InvertedIndex index = new InvertedIndex(argList);
         
         long buildStop = System.currentTimeMillis();
@@ -46,7 +50,7 @@ public class CLI
                     if(docSet != null)
                     {
                         for(Document doc: docSet)
-                            System.out.print(doc + ", ");
+                            System.out.print(doc + " ");
                         System.out.println("");
                     }
                     if(displayText)
@@ -64,6 +68,6 @@ public class CLI
         
         long stopTime = System.currentTimeMillis();
         long queryTime = stopTime - buildStop;
-        System.out.println("@@query time: " + "ms");
+        System.out.println("@@query time: " + queryTime + "ms");
     }
 }
